@@ -234,8 +234,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4923caa22155a7b4e86fffd8d70808b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRadius: 4.4
-  maxRadius: 8.3
+  minRadius: 4.88
+  maxRadius: 5.2
   speed: 1
   stopAt: 0.01
 --- !u!54 &426193078
