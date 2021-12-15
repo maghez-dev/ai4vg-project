@@ -9,17 +9,17 @@ public class AIMovement : MonoBehaviour {
 
     private int currentDirection = 1;
     private Vector3 targetPosition;
-    //private float targetAngle = 0f;
 
     private Rigidbody rb;
 
     [SerializeField] private Transform circlePivot;
     [SerializeField] private float angularSpeed = 2f;
-    [SerializeField] [Range(1f, 15f)] private float minRadius = 1f;
-    [SerializeField] [Range(1f, 15f)] private float maxRadius = 1f;
-    [SerializeField] [Range(0, 360)] private int minAngle = 90;
-    [SerializeField] [Range(0, 360)] private int maxAngle = 180;
+    [SerializeField] [Range(1f, 30f)] private float minRadius = 1f;
+    [SerializeField] [Range(1f, 30f)] private float maxRadius = 1f;
+    [SerializeField] [Range(0, 359)] private int minAngle = 90;
+    [SerializeField] [Range(0, 359)] private int maxAngle = 180;
 
+    private List<GameObject> cache = new List<GameObject>();
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
@@ -83,22 +83,40 @@ public class AIMovement : MonoBehaviour {
         circlePivot.position = new Vector3(x, y, z);
 
         int targetAngle = Random.Range(minAngle, maxAngle);
-
         circlePivot.LookAt(transform);
-        circlePivot.eulerAngles = new Vector3(0, targetAngle, 0);
 
-        x = circlePivot.position.x + ((transform.forward.x * circleRadius));
+        Debug.Log("Target angle = " + targetAngle);
+
+        circlePivot.Rotate(new Vector3(0, targetAngle * currentDirection, 0));
+
+        x = circlePivot.position.x + (circlePivot.forward.x * circleRadius);
         y = circlePivot.position.y;
-        z = circlePivot.position.z + ((transform.forward.z * circleRadius));
+        z = circlePivot.position.z + (circlePivot.forward.z * circleRadius);
         targetPosition = new Vector3(x, y, z);
 
-        if (!CheckPathValidity())
+        if (!CheckPathValidity(targetAngle))
             GenerateNextPivot(radius / 2);
     }
 
 
-    private bool CheckPathValidity() {
+    private bool CheckPathValidity(float targetAngle) {
+        for (int i = 0; i < targetAngle; i++) {
+            circlePivot.LookAt(transform);
 
+            circlePivot.Rotate(new Vector3(0, i * currentDirection, 0));
+
+            Debug.Log(transform.rotation);
+
+            float offset = circleRadius + 1f;
+            float x = circlePivot.position.x + (circlePivot.forward.x * offset);
+            float y = circlePivot.position.y;
+            float z = circlePivot.position.z + (circlePivot.forward.z * offset);
+            Vector3 checkPosition = new Vector3(x, y, z);
+
+            if (!Physics.Raycast(checkPosition, Vector3.down, 10))
+                return false;
+        }
+        
         return true;
     }
 }
