@@ -235,11 +235,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circlePivot: {fileID: 432381956}
-  angularSpeed: 10
-  minRadius: 10
-  maxRadius: 30
+  speed: 10
+  minRadius: 1
+  maxRadius: 100
   minAngle: 0
-  maxAngle: 360
+  maxAngle: 359
 --- !u!54 &426193078
 Rigidbody:
   m_ObjectHideFlags: 0

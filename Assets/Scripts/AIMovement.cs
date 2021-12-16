@@ -13,9 +13,9 @@ public class AIMovement : MonoBehaviour {
     private Rigidbody rb;
 
     [SerializeField] private Transform circlePivot;
-    [SerializeField] private float angularSpeed = 2f;
-    [SerializeField] [Range(1f, 30f)] private float minRadius = 1f;
-    [SerializeField] [Range(1f, 30f)] private float maxRadius = 1f;
+    [SerializeField] private float speed = 2f;
+    [SerializeField] [Range(1f, 100f)] private float minRadius = 1f;
+    [SerializeField] [Range(1f, 100f)] private float maxRadius = 1f;
     [SerializeField] [Range(0, 359)] private int minAngle = 90;
     [SerializeField] [Range(0, 359)] private int maxAngle = 180;
 
@@ -44,7 +44,7 @@ public class AIMovement : MonoBehaviour {
 
 
     private void FixedUpdate() {
-        Quaternion q = Quaternion.AngleAxis((angularSpeed/10) * currentDirection, Vector3.up);
+        Quaternion q = Quaternion.AngleAxis((speed / circleRadius) * currentDirection, Vector3.up);
         Vector3 destination = q * (rb.transform.position - circlePivot.position) + circlePivot.position;
         rb.MovePosition(destination);
         rb.MoveRotation(rb.transform.rotation * q);
