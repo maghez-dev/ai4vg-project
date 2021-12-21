@@ -42,17 +42,16 @@ public class AIMovement : MonoBehaviour {
     private void FixedUpdate() {
         Quaternion rotation = Quaternion.AngleAxis((speed / circleRadius) * currentDirection, Vector3.up);
         Vector3 destination = rotation * (transform.position - circlePivot) + circlePivot;
+
+        Vector3 adjust = Vector3.zero;
         if ((transform.position - circlePivot).magnitude > circleRadius + 0.1f)
-        {
-            Debug.Log("hi");
-        } else if ((transform.position - circlePivot).magnitude < circleRadius - 0.1f)
-        {
-            Debug.Log("hi");
-        }
+            adjust = (circlePivot - transform.position).normalized;
+        else if ((transform.position - circlePivot).magnitude < circleRadius - 0.1f)
+            adjust = (transform.position - circlePivot).normalized;
 
         //MovePosition(destination);
         //MoveRotation(transform.rotation * rotation);
-        transform.LookAt(destination);
+        transform.LookAt(destination + adjust);
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
@@ -82,12 +81,17 @@ public class AIMovement : MonoBehaviour {
             currentDirection = -1;
         }
 
+        int targetAngle = Random.Range(minAngle, maxAngle);
+        if (circleRadius < minRadius * 2 && targetAngle < 180)
+        {
+            currentDirection = 1;
+            targetAngle = 180;
+        }
+
         float x = transform.position.x + ((transform.right.x * circleRadius) * currentDirection);
         float y = transform.position.y;
         float z = transform.position.z + ((transform.right.z * circleRadius) * currentDirection);
         circlePivot = new Vector3(x, y, z);
-
-        int targetAngle = Random.Range(minAngle, maxAngle);
 
         targetPosition = RotateOnPivot(targetAngle * currentDirection, circleRadius);
 
