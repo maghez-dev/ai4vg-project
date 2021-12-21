@@ -6,13 +6,13 @@ using UnityEngine;
 public class AIMovement : MonoBehaviour {
 
     private float circleRadius = 0;
+    private Vector3 circlePivot;
 
     private int currentDirection = 1;
     private Vector3 targetPosition;
 
     private Rigidbody rb;
 
-    [SerializeField] private Transform circlePivot;
     [SerializeField] private float speed = 2f;
     [SerializeField] [Range(1f, 100f)] private float minRadius = 1f;
     [SerializeField] [Range(1f, 100f)] private float maxRadius = 1f;
@@ -44,10 +44,10 @@ public class AIMovement : MonoBehaviour {
 
 
     private void FixedUpdate() {
-        Quaternion q = Quaternion.AngleAxis((speed / circleRadius) * currentDirection, Vector3.up);
-        Vector3 destination = q * (rb.transform.position - circlePivot.position) + circlePivot.position;
+        Quaternion rotation = Quaternion.AngleAxis((speed / circleRadius) * currentDirection, Vector3.up);
+        Vector3 destination = rotation * (transform.position - circlePivot) + circlePivot;
         rb.MovePosition(destination);
-        rb.MoveRotation(rb.transform.rotation * q);
+        rb.MoveRotation(transform.rotation * rotation);
         transform.LookAt(destination);
     }
 
@@ -55,8 +55,8 @@ public class AIMovement : MonoBehaviour {
     private void OnDrawGizmos()
     {
         UnityEditor.Handles.color = Color.green;
-        UnityEditor.Handles.DrawWireDisc(circlePivot.position, Vector3.up, circleRadius);
-        UnityEditor.Handles.DrawWireDisc(circlePivot.position, Vector3.up, 0.2f);
+        UnityEditor.Handles.DrawWireDisc(circlePivot, Vector3.up, circleRadius);
+        UnityEditor.Handles.DrawWireDisc(circlePivot, Vector3.up, 0.2f);
         UnityEditor.Handles.color = Color.red;
         UnityEditor.Handles.DrawWireDisc(targetPosition, Vector3.up, 0.3f);
     }
@@ -80,19 +80,11 @@ public class AIMovement : MonoBehaviour {
         float x = transform.position.x + ((transform.right.x * circleRadius) * currentDirection);
         float y = transform.position.y;
         float z = transform.position.z + ((transform.right.z * circleRadius) * currentDirection);
-        circlePivot.position = new Vector3(x, y, z);
+        circlePivot = new Vector3(x, y, z);
 
         int targetAngle = Random.Range(minAngle, maxAngle);
-        circlePivot.LookAt(transform);
 
-        Debug.Log("Target angle = " + targetAngle);
-
-        circlePivot.Rotate(new Vector3(0, targetAngle * currentDirection, 0));
-
-        x = circlePivot.position.x + (circlePivot.forward.x * circleRadius);
-        y = circlePivot.position.y;
-        z = circlePivot.position.z + (circlePivot.forward.z * circleRadius);
-        targetPosition = new Vector3(x, y, z);
+        targetPosition = RotateOnPivot(targetAngle * currentDirection, circleRadius);
 
         if (!CheckPathValidity(targetAngle))
             GenerateNextPivot(radius / 2);
@@ -101,22 +93,25 @@ public class AIMovement : MonoBehaviour {
 
     private bool CheckPathValidity(float targetAngle) {
         for (int i = 0; i < targetAngle; i++) {
-            circlePivot.LookAt(transform);
-
-            circlePivot.Rotate(new Vector3(0, i * currentDirection, 0));
-
-            Debug.Log(transform.rotation);
-
-            float offset = circleRadius + 1f;
-            float x = circlePivot.position.x + (circlePivot.forward.x * offset);
-            float y = circlePivot.position.y;
-            float z = circlePivot.position.z + (circlePivot.forward.z * offset);
-            Vector3 checkPosition = new Vector3(x, y, z);
+            Vector3 checkPosition = RotateOnPivot(i * currentDirection, circleRadius + 1f);
 
             if (!Physics.Raycast(checkPosition, Vector3.down, 10))
                 return false;
         }
         
         return true;
+    }
+
+    private Vector3 RotateOnPivot(float angle, float offset) {
+        Vector3 vector = transform.position - circlePivot;
+        Quaternion rotation = Quaternion.Euler(0, angle, 0);
+        vector = (rotation * vector).normalized;
+
+        float x = circlePivot.x + (vector.x * offset);
+        float y = circlePivot.y;
+        float z = circlePivot.z + (vector.z * offset);
+        Vector3 checkPosition = new Vector3(x, y, z);
+
+        return checkPosition;
     }
 }
