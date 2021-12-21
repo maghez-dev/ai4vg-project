@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+
 public class AIMovement : MonoBehaviour {
 
     private float circleRadius = 0;
@@ -10,8 +10,6 @@ public class AIMovement : MonoBehaviour {
 
     private int currentDirection = 1;
     private Vector3 targetPosition;
-
-    private Rigidbody rb;
 
     [SerializeField] private float speed = 2f;
     [SerializeField] [Range(1f, 100f)] private float minRadius = 1f;
@@ -22,8 +20,6 @@ public class AIMovement : MonoBehaviour {
     private List<GameObject> cache = new List<GameObject>();
 
     private void Start() {
-        rb = GetComponent<Rigidbody>();
-
         GenerateNextPivot(Random.Range(minRadius, maxRadius));
     }
 
@@ -46,9 +42,18 @@ public class AIMovement : MonoBehaviour {
     private void FixedUpdate() {
         Quaternion rotation = Quaternion.AngleAxis((speed / circleRadius) * currentDirection, Vector3.up);
         Vector3 destination = rotation * (transform.position - circlePivot) + circlePivot;
-        rb.MovePosition(destination);
-        rb.MoveRotation(transform.rotation * rotation);
+        if ((transform.position - circlePivot).magnitude > circleRadius + 0.1f)
+        {
+            Debug.Log("hi");
+        } else if ((transform.position - circlePivot).magnitude < circleRadius - 0.1f)
+        {
+            Debug.Log("hi");
+        }
+
+        //MovePosition(destination);
+        //MoveRotation(transform.rotation * rotation);
         transform.LookAt(destination);
+        transform.position += transform.forward * speed * Time.deltaTime;
     }
 
 

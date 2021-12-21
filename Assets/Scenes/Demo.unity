@@ -136,6 +136,8 @@ GameObject:
   - component: {fileID: 426193074}
   - component: {fileID: 426193073}
   - component: {fileID: 426193078}
+  - component: {fileID: 426193080}
+  - component: {fileID: 426193079}
   - component: {fileID: 426193077}
   m_Layer: 0
   m_Name: Agent
@@ -235,6 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  turnBackLimit: 1
   minRadius: 1
   maxRadius: 100
   minAngle: 0
@@ -255,6 +258,31 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &426193079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426193072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22770fbd455dc04e9324430a19fda66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tollerance: 0.1
+--- !u!114 &426193080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426193072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2558a8c1a1ef7e64a81ad97e99946f88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
