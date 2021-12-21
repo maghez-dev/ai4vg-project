@@ -11,13 +11,12 @@ public class AIMovement : MonoBehaviour {
     private int currentDirection = 1;
     private Vector3 targetPosition;
 
-    [SerializeField] private float speed = 2f;
-    [SerializeField] [Range(1f, 100f)] private float minRadius = 1f;
-    [SerializeField] [Range(1f, 100f)] private float maxRadius = 1f;
-    [SerializeField] [Range(0, 359)] private int minAngle = 90;
-    [SerializeField] [Range(0, 359)] private int maxAngle = 180;
+    [SerializeField] [Range(0f, 10f)] private float speed = 5f;
+    [SerializeField] [Range(2f, 100f)] private float minRadius = 2f;
+    [SerializeField] [Range(2f, 100f)] private float maxRadius = 100f;
+    [SerializeField] [Range(1, 359)] private int minAngle = 1;
+    [SerializeField] [Range(1, 359)] private int maxAngle = 359;
 
-    private List<GameObject> cache = new List<GameObject>();
 
     private void Start() {
         GenerateNextPivot(Random.Range(minRadius, maxRadius));
@@ -34,7 +33,7 @@ public class AIMovement : MonoBehaviour {
             GenerateNextPivot(Random.Range(minRadius, maxRadius));
 
         Vector3 toDestination = transform.position - targetPosition;
-        if (toDestination.magnitude < 0.5f)
+        if (toDestination.magnitude < 0.1f)
             GenerateNextPivot(Random.Range(minRadius, maxRadius));
     }
 
@@ -42,16 +41,7 @@ public class AIMovement : MonoBehaviour {
     private void FixedUpdate() {
         Quaternion rotation = Quaternion.AngleAxis((speed / circleRadius) * currentDirection, Vector3.up);
         Vector3 destination = rotation * (transform.position - circlePivot) + circlePivot;
-
-        Vector3 adjust = Vector3.zero;
-        if ((transform.position - circlePivot).magnitude > circleRadius + 0.1f)
-            adjust = (circlePivot - transform.position).normalized;
-        else if ((transform.position - circlePivot).magnitude < circleRadius - 0.1f)
-            adjust = (transform.position - circlePivot).normalized;
-
-        //MovePosition(destination);
-        //MoveRotation(transform.rotation * rotation);
-        transform.LookAt(destination + adjust);
+        transform.LookAt(destination);
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
@@ -82,10 +72,10 @@ public class AIMovement : MonoBehaviour {
         }
 
         int targetAngle = Random.Range(minAngle, maxAngle);
-        if (circleRadius < minRadius * 2 && targetAngle < 180)
-        {
+
+        if (circleRadius < 2f) {
             currentDirection = 1;
-            targetAngle = 180;
+            targetAngle = 90;
         }
 
         float x = transform.position.x + ((transform.right.x * circleRadius) * currentDirection);
@@ -101,8 +91,13 @@ public class AIMovement : MonoBehaviour {
 
 
     private bool CheckPathValidity(float targetAngle) {
-        for (int i = 0; i < targetAngle; i++) {
+        for (int i = 0; i < targetAngle + 5; i++) {
             Vector3 checkPosition = RotateOnPivot(i * currentDirection, circleRadius + 1f);
+
+            if (!Physics.Raycast(checkPosition, Vector3.down, 10))
+                return false;
+
+            checkPosition = RotateOnPivot(i * currentDirection, circleRadius - 1f);
 
             if (!Physics.Raycast(checkPosition, Vector3.down, 10))
                 return false;
