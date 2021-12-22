@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class AIMovement : MonoBehaviour {
 
+    private float destinationPoint = 0.5f;
+
     private float circleRadius = 0;
     private Vector3 circlePivot;
 
     private int currentDirection = 1;
     private Vector3 targetPosition;
 
-    [SerializeField] [Range(0f, 10f)] private float speed = 5f;
+    [SerializeField] [Range(0f, 20f)] private float speed = 5f;
     [SerializeField] [Range(2f, 100f)] private float minRadius = 2f;
     [SerializeField] [Range(2f, 100f)] private float maxRadius = 100f;
     [SerializeField] [Range(1, 359)] private int minAngle = 1;
@@ -33,7 +35,7 @@ public class AIMovement : MonoBehaviour {
             GenerateNextPivot(Random.Range(minRadius, maxRadius));
 
         Vector3 toDestination = transform.position - targetPosition;
-        if (toDestination.magnitude < 0.1f)
+        if (toDestination.magnitude < destinationPoint)
             GenerateNextPivot(Random.Range(minRadius, maxRadius));
     }
 
@@ -52,7 +54,7 @@ public class AIMovement : MonoBehaviour {
         UnityEditor.Handles.DrawWireDisc(circlePivot, Vector3.up, circleRadius);
         UnityEditor.Handles.DrawWireDisc(circlePivot, Vector3.up, 0.2f);
         UnityEditor.Handles.color = Color.red;
-        UnityEditor.Handles.DrawWireDisc(targetPosition, Vector3.up, 0.3f);
+        UnityEditor.Handles.DrawWireDisc(targetPosition, Vector3.up, destinationPoint);
     }
 
 
@@ -61,7 +63,7 @@ public class AIMovement : MonoBehaviour {
 
         int dir = Random.Range(1, 3);
 
-        float zPos = 0f;
+        float zPos;
         if (dir == 1) {
             zPos = circleRadius;
             currentDirection = 1;
@@ -92,12 +94,12 @@ public class AIMovement : MonoBehaviour {
 
     private bool CheckPathValidity(float targetAngle) {
         for (int i = 0; i < targetAngle + 5; i++) {
-            Vector3 checkPosition = RotateOnPivot(i * currentDirection, circleRadius + 1f);
+            Vector3 checkPosition = RotateOnPivot(i * currentDirection, circleRadius + 2f);
 
             if (!Physics.Raycast(checkPosition, Vector3.down, 10))
                 return false;
 
-            checkPosition = RotateOnPivot(i * currentDirection, circleRadius - 1f);
+            checkPosition = RotateOnPivot(i * currentDirection, circleRadius - 2f);
 
             if (!Physics.Raycast(checkPosition, Vector3.down, 10))
                 return false;
