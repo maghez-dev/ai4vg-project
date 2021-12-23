@@ -234,10 +234,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  minRadius: 4
+  minRadius: 5
   maxRadius: 100
   minAngle: 1
-  maxAngle: 359
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

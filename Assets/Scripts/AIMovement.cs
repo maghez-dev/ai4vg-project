@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AIMovement : MonoBehaviour {
 
-    private float destinationPoint = 0.5f;
+    private float destinationPoint = 0.4f;
 
     private float circleRadius = 0;
     private Vector3 circlePivot;
@@ -13,23 +13,20 @@ public class AIMovement : MonoBehaviour {
     private int currentDirection = 1;
     private Vector3 targetPosition;
 
-    [SerializeField] [Range(0f, 20f)] private float speed = 5f;
-    [SerializeField] [Range(2f, 100f)] private float minRadius = 2f;
-    [SerializeField] [Range(2f, 100f)] private float maxRadius = 100f;
+    [SerializeField] [Range(0f, 15f)] private float speed = 5f;
+    [SerializeField] [Range(5f, 100f)] private float minRadius = 2f;
+    [SerializeField] [Range(5f, 100f)] private float maxRadius = 100f;
     [SerializeField] [Range(1, 359)] private int minAngle = 1;
-    [SerializeField] [Range(1, 359)] private int maxAngle = 359;
+    private int maxAngle = 359;
 
 
     private void Start() {
         GenerateNextPivot(Random.Range(minRadius, maxRadius));
     }
 
-
     private void Update() {
         if (minRadius > maxRadius)
             minRadius = maxRadius;
-        if (minAngle > maxAngle)
-            minAngle = maxAngle;
 
         if (Input.GetKeyUp("up"))
             GenerateNextPivot(Random.Range(minRadius, maxRadius));
@@ -75,9 +72,12 @@ public class AIMovement : MonoBehaviour {
 
         int targetAngle = Random.Range(minAngle, maxAngle);
 
-        if (circleRadius < 2f) {
+        if (circleRadius < 5f) {
             currentDirection = 1;
-            targetAngle = 90;
+            targetAngle = 135;
+        }
+        if (circleRadius < destinationPoint) {
+            circleRadius = destinationPoint + 1f;
         }
 
         float x = transform.position.x + ((transform.right.x * circleRadius) * currentDirection);
