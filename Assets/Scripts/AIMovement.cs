@@ -14,8 +14,8 @@ public class AIMovement : MonoBehaviour {
     private Vector3 targetPosition;
 
     [SerializeField] [Range(0f, 15f)] private float speed = 5f;
-    [SerializeField] [Range(5f, 100f)] private float minRadius = 2f;
-    [SerializeField] [Range(5f, 100f)] private float maxRadius = 100f;
+    [SerializeField] [Range(5f, 50f)] private float minRadius = 5f;
+    [SerializeField] [Range(5f, 50f)] private float maxRadius = 50f;
     [SerializeField] [Range(1, 359)] private int minAngle = 1;
     private int maxAngle = 359;
 
